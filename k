@@ -42,7 +42,9 @@ esac
 # Ensure we have at least 1 kubectl version
 KNOWN_VERSION="v1.16.3"
 LOCAL_KUBECTL=$KX_PATH/kubectl-$KNOWN_VERSION
-KUBECTL_PATH=$(command -v kubectl)
+if $(command -v kubectl &>/dev/null); then
+  KUBECTL_PATH=$(command -v kubectl)
+fi
 if [ ! -z "$KUBECTL_PATH" ]; then
   LOCAL_KUBECTL=$KUBECTL_PATH
 elif [ ! -f "$LOCAL_KUBECTL" ]; then
@@ -52,7 +54,7 @@ fi
 
 # Get the server version from the server if not cached
 if [ -z "$TARGET_VERSION" ]; then
-  TARGET_VERSION=$($LOCAL_KUBECTL version -o json | jq -r '.serverVersion.gitVersion')
+  TARGET_VERSION=$($LOCAL_KUBECTL version -o json 2>/dev/null | jq -r '.serverVersion.gitVersion')
   if [ -z "$TARGET_VERSION" ] || [ "$TARGET_VERSION" == "null" ]; then
     echo "Unable to get version information from cluster"
     exit 1
