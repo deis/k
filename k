@@ -15,12 +15,26 @@ case "$OSTYPE" in
     OS="linux"
 esac
 
+# Default to ~/.kube/config if KUBECONFIG is not set
+if [ -z "$KUBECONFIG" ]; then
+  if [ -f "$HOME/.kube/config" ]; then
+    KUBECONFIG="$HOME/.kube/config"
+  fi
+fi
+
 # Attempt to load the server version from cache
 if [ ! -z "$KUBECONFIG" ]; then
-  if [ "$OS" == "darwin" ]; then
-    KUBECONFIG_HASH=$(echo "$KUBECONFIG" | shasum -a 256 | cut -c1-5)
+  # Resolve symlink if KUBECONFIG points to a symlink
+  if [ -L "$KUBECONFIG" ]; then
+    RESOLVED_KUBECONFIG=$(readlink -f "$KUBECONFIG")
   else
-    KUBECONFIG_HASH=$(echo "$KUBECONFIG" | sha256sum | cut -c1-5)
+    RESOLVED_KUBECONFIG="$KUBECONFIG"
+  fi
+
+  if [ "$OS" == "darwin" ]; then
+    KUBECONFIG_HASH=$(echo "$RESOLVED_KUBECONFIG" | shasum -a 256 | cut -c1-5)
+  else
+    KUBECONFIG_HASH=$(echo "$RESOLVED_KUBECONFIG" | sha256sum | cut -c1-5)
   fi
   VERSION_CACHE_FILE="$KX_PATH/cache/$KUBECONFIG_HASH"
   TARGET_VERSION=$(cat "$VERSION_CACHE_FILE" 2> /dev/null)
