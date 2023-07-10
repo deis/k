@@ -46,7 +46,7 @@ KUBECTL_PATH=$(command -v kubectl)
 if [ ! -z "$KUBECTL_PATH" ]; then
   LOCAL_KUBECTL=$KUBECTL_PATH
 elif [ ! -f "$LOCAL_KUBECTL" ]; then
-  curl -L -o "$LOCAL_KUBECTL" "https://storage.googleapis.com/kubernetes-release/release/$KNOWN_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
+  curl -L -o "$LOCAL_KUBECTL" "https://dl.k8s.io/release/$KNOWN_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
   chmod +x "$LOCAL_KUBECTL"
 fi
 
@@ -72,7 +72,7 @@ fi
 TARGET=$KX_PATH/kubectl-$TARGET_VERSION
 
 if [ ! -f "$TARGET" ]; then
-  curl -L -o "$TARGET" "https://storage.googleapis.com/kubernetes-release/release/$TARGET_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
+  curl -L -o "$TARGET" "https://dl.k8s.io/release/$TARGET_VERSION/bin/$OS/$CPU_ARCHITECTURE/kubectl"
   chmod +x "$TARGET"
 fi
 
