@@ -73,7 +73,7 @@ if [ -z "$TARGET_VERSION" ]; then
     echo "Unable to get version information from cluster"
     exit 1
   fi
-  if [ $(echo $TARGET_VERSION | egrep "alpha|beta|rc") ]; then
+  if [[ $TARGET_VERSION =~ (alpha|beta|rc) ]]; then
     TARGET_VERSION=$(echo $TARGET_VERSION | cut -d'.' -f1-4)
   else
     TARGET_VERSION=$(echo $TARGET_VERSION | cut -d'.' -f1-3)
